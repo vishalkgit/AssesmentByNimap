@@ -1,0 +1,35 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model IEnumerable<Category>
+@{
+
+}
+<h1>Category Index</h1>
+<p>
+    <a asp-action="Create">Add Category</a>
+</p>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Category Id</th>
+            <th>Category Name</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.CategoryId</td>
+                <td>@item.CategoryName</td>
+                <td>
+                    <a asp-action="Edit" asp-route-categoryId="@item.CategoryId">Edit</a>
+                    <a asp-action="Details" asp-route-categoryId="@item.CategoryId">Details</a>
+                    <a asp-action="Delete" asp-route-categoryId="@item.CategoryId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Index";
+}
+<h1>Index</h1>
+@{
+    Pager pager = new Pager();
+
+}
+<div class="container">
+
+    @if (pager.TotalPages > 0)
+    {
+        <ul class="pagination justify-content-end">
+            @for (var pge = pager.StartPage; pge <= pager.EndPage; pge++)
+            {
+                <li class="page-item @(pge == pager.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-controller="Product" asp-action="Index" asp-route-pg="@pge"> @pge </a>
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+<p>
+    <a asp-action="Create">Add Product</a>
+</p>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ProductID</th>
+            <th>ProductName</th>
+            <th>Category ID</th>
+            <th>CategoryName</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductId</td>
+                <td>@item.ProductName</td>
+                <td>@item.CategoryId</td>
+                <td>@item.CategoryName</td>
+                <td>
+                    <a asp-action="Edit" asp-route-productId="@item.ProductId">Edit</a>
+                    <a asp-action="Details" asp-route-productId="@item.ProductId">Details</a>
+                    <a asp-action="Delete" asp-route-productId="@item.ProductId">Delete</a>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
