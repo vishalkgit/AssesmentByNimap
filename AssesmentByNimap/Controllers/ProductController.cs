@@ -1,4 +1,5 @@
 ﻿using AssesmentByNimap.Models;
+using AssesmentByNimap.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,11 +9,15 @@ namespace AssesmentByNimap.Controllers
     public class ProductController : Controller
     {
         private readonly IConfiguration configuration;
+        private readonly IProductService productService;
+        private readonly ICategoryService categoryService;
         ProductCrud productdb;
         CategoryCrud categorydb;
-        public ProductController(IConfiguration configuration)
+        public ProductController(IConfiguration configuration, IProductService productService, ICategoryService categoryService)
         {
             this.configuration = configuration;
+            this.productService = productService;
+            this.categoryService = categoryService; 
             productdb = new ProductCrud(this.configuration);
             categorydb = new CategoryCrud(this.configuration);
 
@@ -20,7 +25,7 @@ namespace AssesmentByNimap.Controllers
         // GET: ProductController
         public ActionResult Index(int pg = 1)
         {
-            var products = productdb.GetProducts();
+            var products = productService.GetAllProducts();
 
             const int pagesize = 10;
             if (pg < 1)
@@ -44,14 +49,14 @@ namespace AssesmentByNimap.Controllers
         // GET: ProductController/Details/5
         public ActionResult Details(int id)
         {
-            var result = productdb.GetProductById(id);
+            var result = productService.GetProductById(id);
             return View(result);
         }
 
         // GET: ProductController/Create
         public ActionResult Create()
         {
-            ViewBag.Categories = categorydb.GetAllCategories();
+            ViewBag.Categories = categoryService.GetAllCategories();
             //var res = categorydb.GetCategories();
             return View();
         }
@@ -64,7 +69,7 @@ namespace AssesmentByNimap.Controllers
             try
             {
 
-                int result = productdb.AddProduct(product);
+                int result = productService.AddProduct(product);
                 if (result >= 1)
                 {
                     return RedirectToAction(nameof(Index));
@@ -80,7 +85,7 @@ namespace AssesmentByNimap.Controllers
             catch (Exception ex)
             {
                 ViewBag.ErrorMsg = ex.Message;
-                ViewBag.Categories = categorydb.GetAllCategories();
+                ViewBag.Categories = categoryService.GetAllCategories();
                 return View(product);
             }
         }
@@ -90,8 +95,8 @@ namespace AssesmentByNimap.Controllers
         // GET: ProductController/Edit/5
         public ActionResult Edit(int id)
         {
-            ViewBag.Categories = categorydb.GetAllCategories();
-            var res = productdb.GetProductById(id);
+            ViewBag.Categories = categoryService.GetAllCategories();
+            var res = productService.GetProductById(id);
             return View(res);
         }
 
@@ -102,7 +107,7 @@ namespace AssesmentByNimap.Controllers
         {
             try
             {
-                int response = productdb.UpdateProduct(product);
+                int response = productService.UpdateProduct(product);
                 if (response >= 1)
                 {
 
@@ -124,7 +129,7 @@ namespace AssesmentByNimap.Controllers
         // GET: ProductController/Delete/5
         public ActionResult Delete(int id)
         {
-            var res = productdb.DeleteProduct(id);
+            var res = productService.DeleteProduct(id);
             return View(res);
         }
 
@@ -136,7 +141,7 @@ namespace AssesmentByNimap.Controllers
         {
             try
             {
-                int response = productdb.DeleteProduct(id);
+                int response = productService.DeleteProduct(id);
                 if (response >= 1)
                 {
 

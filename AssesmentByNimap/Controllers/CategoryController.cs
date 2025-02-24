@@ -1,4 +1,5 @@
 ﻿using AssesmentByNimap.Models;
+using AssesmentByNimap.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -9,18 +10,38 @@ namespace AssesmentByNimap.Controllers
     {
 
         private readonly IConfiguration configuration;
+        private readonly ICategoryService categoryService;
         CategoryCrud cd;
 
-        public CategoryController(IConfiguration configuration)
+        public CategoryController(IConfiguration configuration, ICategoryService categoryService)
         {
             this.configuration = configuration;
+            this.categoryService = categoryService; 
             cd = new CategoryCrud(this.configuration);
         }
 
         // GET: CategoryController
-        public ActionResult Index()
+        public ActionResult Index(int pg = 1)
         {
-            var result = cd.GetAllCategories();
+            var result = categoryService.GetAllCategories();
+
+            const int pagesize = 10;
+            if (pg < 1)
+            {
+                pg = 1;
+            }
+
+            int recscount = result.Count();
+
+            var pager = new Pager(recscount, pg, pagesize);
+
+            int recskip = (pg - 1) * pagesize;
+
+            var data = result.Skip(recskip).Take(pager.PageSize).ToList();
+
+            this.ViewBag.Pager = pager;
+
+
             return View(result);
 
         }
@@ -46,7 +67,7 @@ namespace AssesmentByNimap.Controllers
         {
             try
             {
-                int result = cd.AddCategory(category);
+                int result = categoryService.AddCategory(category);
                 if (result >= 1)
                 {
 
@@ -82,7 +103,7 @@ namespace AssesmentByNimap.Controllers
         {
             try
             {
-                int res = cd.UpdateCategory(category);
+                int res = categoryService.UpdateCategory(category);
                 if (res >= 1)
                 {
 
@@ -105,7 +126,7 @@ namespace AssesmentByNimap.Controllers
         // GET: CategoryController/Delete/5
         public ActionResult Delete(int id)
         {
-            var res = cd.DeleteCategory(id);
+            var res = categoryService.GetCategoryById(id);
             return View(res);
 
         }
@@ -114,12 +135,11 @@ namespace AssesmentByNimap.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Delete")]
-
         public ActionResult DeleteConfirm(int id)
         {
             try
             {
-                int response = cd.DeleteCategory(id);
+                int response = categoryService.DeleteCategory(id);
                 if (response >= 1)
                 {
 

@@ -1,11 +1,13 @@
 ﻿@model AssesmentByNimap.Models.Category
 
 <h3>Update Category</h3>
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            
+<form asp-action="Edit" method="post">
+<input type="hidden" asp-for="CategoryId" />
+<label>Category Name</label>
+<input type="text" asp-for="CategoryName" required />
+<input type="button" value="Update" />
+</form>
 
-        </form>   
-        </div>
-</div>
+
+
+ 
